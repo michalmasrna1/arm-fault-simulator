@@ -60,6 +60,18 @@ namespace fault_models
             f.manipulated_instruction[f.fault_model_iteration] = 0x00;
         }
 
+        void bit_set(armory::InstructionFault& f)
+        {
+            std::memcpy(f.manipulated_instruction, f.original_instruction, f.instr_size);
+            f.manipulated_instruction[f.fault_model_iteration / 8] |= 1 << (f.fault_model_iteration % 8);
+        }
+
+        void bit_clear(armory::InstructionFault& f)
+        {
+            std::memcpy(f.manipulated_instruction, f.original_instruction, f.instr_size);
+            f.manipulated_instruction[f.fault_model_iteration / 8] &= ~(1 << (f.fault_model_iteration % 8));
+        }
+
         void bit_flip(armory::InstructionFault& f)
         {
             std::memcpy(f.manipulated_instruction, f.original_instruction, f.instr_size);
@@ -132,6 +144,10 @@ namespace fault_models
     const InstructionFaultModel* instr_p_setbyte = instr_p_setbyte_owner.get();
     const std::unique_ptr<InstructionFaultModel> instr_p_clearbyte_owner = std::make_unique<InstructionFaultModel>("Permanent Instruction Byte-Clear", InstructionFaultModel::FaultType::PERMANENT, instruction_faults::count_bytes, instruction_faults::return_true, instruction_faults::byte_clear);
     const InstructionFaultModel* instr_p_clearbyte = instr_p_clearbyte_owner.get();
+    const std::unique_ptr<InstructionFaultModel> instr_p_bitset_owner = std::make_unique<InstructionFaultModel>("Permanent Instruction Bit-Set", InstructionFaultModel::FaultType::PERMANENT, instruction_faults::count_bits, instruction_faults::return_true, instruction_faults::bit_set);
+    const InstructionFaultModel* instr_p_bitset = instr_p_bitset_owner.get();
+    const std::unique_ptr<InstructionFaultModel> instr_p_bitclear_owner = std::make_unique<InstructionFaultModel>("Permanent Instruction Bit-Clear", InstructionFaultModel::FaultType::PERMANENT, instruction_faults::count_bits, instruction_faults::return_true, instruction_faults::bit_clear);
+    const InstructionFaultModel* instr_p_bitclear = instr_p_bitclear_owner.get();
     const std::unique_ptr<InstructionFaultModel> instr_p_bitflip_owner = std::make_unique<InstructionFaultModel>("Permanent Instruction Bit-Flip", InstructionFaultModel::FaultType::PERMANENT, instruction_faults::count_bits, instruction_faults::return_true, instruction_faults::bit_flip);
     const InstructionFaultModel* instr_p_bitflip = instr_p_bitflip_owner.get();
 
@@ -141,6 +157,10 @@ namespace fault_models
     const InstructionFaultModel* instr_t_setbyte = instr_t_setbyte_owner.get();
     const std::unique_ptr<InstructionFaultModel> instr_t_clearbyte_owner = std::make_unique<InstructionFaultModel>("Transient Instruction Byte-Clear", InstructionFaultModel::FaultType::TRANSIENT, instruction_faults::count_bytes, instruction_faults::return_true, instruction_faults::byte_clear);
     const InstructionFaultModel* instr_t_clearbyte = instr_t_clearbyte_owner.get();
+    const std::unique_ptr<InstructionFaultModel> instr_t_bitset_owner = std::make_unique<InstructionFaultModel>("Transient Instruction Bit-Set", InstructionFaultModel::FaultType::TRANSIENT, instruction_faults::count_bits, instruction_faults::return_true, instruction_faults::bit_set);
+    const InstructionFaultModel* instr_t_bitset = instr_t_bitset_owner.get();
+    const std::unique_ptr<InstructionFaultModel> instr_t_bitclear_owner = std::make_unique<InstructionFaultModel>("Transient Instruction Bit-Clear", InstructionFaultModel::FaultType::TRANSIENT, instruction_faults::count_bits, instruction_faults::return_true, instruction_faults::bit_clear);
+    const InstructionFaultModel* instr_t_bitclear = instr_t_bitclear_owner.get();
     const std::unique_ptr<InstructionFaultModel> instr_t_bitflip_owner = std::make_unique<InstructionFaultModel>("Transient Instruction Bit-Flip", InstructionFaultModel::FaultType::TRANSIENT, instruction_faults::count_bits, instruction_faults::return_true, instruction_faults::bit_flip);
     const InstructionFaultModel* instr_t_bitflip = instr_t_bitflip_owner.get();
 
@@ -179,9 +199,9 @@ namespace fault_models
     const std::unique_ptr<RegisterFaultModel> reg_t_bitflip_owner = std::make_unique<RegisterFaultModel>("Transient Register Bit-Flip", RegisterFaultModel::FaultType::TRANSIENT, register_faults::return_32, register_faults::register_tester, register_faults::bit_flip);
     const RegisterFaultModel* reg_t_bitflip = reg_t_bitflip_owner.get();
 
-    const std::vector<const FaultModel*> all_fault_models = {instr_p_skip, instr_p_setbyte, instr_p_clearbyte, instr_p_bitflip, instr_t_skip, instr_t_setbyte, instr_t_clearbyte, instr_t_bitflip, reg_p_clear, reg_p_fill, reg_p_setbyte, reg_p_clearbyte, reg_p_bitset, reg_p_bitclear, reg_o_clear, reg_o_fill, reg_o_setbyte, reg_o_clearbyte, reg_o_bitflip, reg_t_clear, reg_t_fill, reg_t_setbyte, reg_t_clearbyte, reg_t_bitflip};
-    const std::vector<const FaultModel*> non_permanent_fault_models = {instr_t_skip, instr_t_setbyte, instr_t_clearbyte, instr_t_bitflip, reg_o_clear, reg_o_fill, reg_o_setbyte, reg_o_clearbyte, reg_o_bitflip, reg_t_clear, reg_t_fill, reg_t_setbyte, reg_t_clearbyte, reg_t_bitflip};
-    const std::vector<const FaultModel*> instruction_fault_models = {instr_p_skip, instr_p_setbyte, instr_p_clearbyte, instr_p_bitflip, instr_t_skip, instr_t_setbyte, instr_t_clearbyte, instr_t_bitflip};
+    const std::vector<const FaultModel*> all_fault_models = {instr_p_skip, instr_p_setbyte, instr_p_clearbyte, instr_p_bitset, instr_p_bitclear, instr_p_bitflip, instr_t_skip, instr_t_setbyte, instr_t_clearbyte, instr_t_bitset, instr_t_bitclear, instr_t_bitflip, reg_p_clear, reg_p_fill, reg_p_setbyte, reg_p_clearbyte, reg_p_bitset, reg_p_bitclear, reg_o_clear, reg_o_fill, reg_o_setbyte, reg_o_clearbyte, reg_o_bitflip, reg_t_clear, reg_t_fill, reg_t_setbyte, reg_t_clearbyte, reg_t_bitflip};
+    const std::vector<const FaultModel*> non_permanent_fault_models = {instr_t_skip, instr_t_setbyte, instr_t_clearbyte, instr_t_bitset, instr_t_bitclear, instr_t_bitflip, reg_o_clear, reg_o_fill, reg_o_setbyte, reg_o_clearbyte, reg_o_bitflip, reg_t_clear, reg_t_fill, reg_t_setbyte, reg_t_clearbyte, reg_t_bitflip};
+    const std::vector<const FaultModel*> instruction_fault_models = {instr_p_skip, instr_p_setbyte, instr_p_clearbyte, instr_p_bitset, instr_p_bitclear, instr_p_bitflip, instr_t_skip, instr_t_setbyte, instr_t_clearbyte, instr_t_bitset, instr_t_bitclear, instr_t_bitflip};
     const std::vector<const FaultModel*> register_fault_models = {reg_p_clear, reg_p_fill, reg_p_setbyte, reg_p_clearbyte, reg_p_bitset, reg_p_bitclear, reg_o_clear, reg_o_fill, reg_o_setbyte, reg_o_clearbyte, reg_o_bitflip, reg_t_clear, reg_t_fill, reg_t_setbyte, reg_t_clearbyte, reg_t_bitflip};
     const std::vector<const FaultModel*> non_single_bit_fault_models = {instr_p_skip, instr_p_setbyte, instr_p_clearbyte, instr_t_skip, instr_t_setbyte, instr_t_clearbyte, reg_p_clear, reg_p_fill, reg_p_setbyte, reg_p_clearbyte, reg_o_clear, reg_o_fill, reg_o_setbyte, reg_o_clearbyte, reg_t_clear, reg_t_fill, reg_t_setbyte, reg_t_clearbyte};
 
