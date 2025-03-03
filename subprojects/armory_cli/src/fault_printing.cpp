@@ -142,6 +142,74 @@ namespace armory_cli
             print_differences(orig_str, manip_str);
         }
 
+        // TODO: This would be a harder change, I would suggest
+        //       a method which returns an instruction (address and size)
+        //       from a given binary (ctx.binary) and the instruction
+        //       number (f.time). 
+
+        // const CodeSection* text_segment = nullptr;
+        // auto i = 0;
+        // for (const auto& segment : ctx.binary)
+        // {
+        //     if (i == 1)
+        //     {
+        //         text_segment = &segment;
+        //     }
+        //     i++;
+        // }
+
+        // // if (text_segment == nullptr)
+        // // {
+        // //     std::cout << "ERROR: " << std::hex << f.address << " is not within a defined segment of the binary" << std::endl;
+        // //     return;
+        // // }
+
+        // u8 bytes[4] = {0xFF, 0xFF, 0xFF, 0xFF};
+        // std::memcpy(bytes, text_segment->bytes.data() + f.address - text_segment->offset, std::min((u32)4, (u32)text_segment->bytes.size() - (f.address - text_segment->offset)));
+        // std::string original_code;
+        // std::string original_string;
+
+        // {
+        //     disasm.reset();
+        //     auto success = disasm.disassemble(f.address, bytes, f.instr_size);
+        //     auto instr   = disasm.get_instruction();
+        //     if (success == armory::ReturnCode::OK)
+        //     {
+        //         original_code   = disasm.get_string();
+        //         original_string = to_hex(instr.encoding, instr.size * 2);
+        //     }
+        //     else
+        //     {
+        //         original_code   = "<not a valid instruction>";
+        //         original_string = to_hex(instr.encoding >> 16, 4);
+        //     }
+        // }
+
+        // // std::memcpy(bytes, f.manipulated_instruction, f.instr_size);
+        // // disasm.reset();
+        // // disasm.disassemble(f.address, bytes, 4);
+        // // auto instr            = disasm.get_instruction();
+        // // auto manipulated_code = disasm.get_string();
+
+        // // std::string manip_str = to_hex(instr.encoding, instr.size * 2);
+
+        // // std::cout << std::hex << f.address << ": ";
+        // // std::cout << original_string;
+        // // std::cout << " --> ";
+        // // for (u32 i = 0; i < manip_str.size(); ++i)
+        // // {
+        // //     if (i < original_string.size() && original_string[i] != manip_str[i])
+        // //     {
+        // //         std::cout << termcolor::bright_red << manip_str[i] << termcolor::reset;
+        // //     }
+        // //     else
+        // //     {
+        // //         std::cout << manip_str[i];
+        // //     }
+        // // }
+
+        // std::cout << "  [" << original_code << " ]";
+
         std::cout << " | " << f.model->get_name() << std::dec;
 
         if (f.model->get_number_of_iterations(f) > 1)
