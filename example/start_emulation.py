@@ -1,4 +1,4 @@
-START_SYMBOL = "interesting_to_fault"
+START_SYMBOL = "main"
 HALT_SYMBOLS = ["super_secret_function"]
 IGNORE_SYMBOLS = []
 
